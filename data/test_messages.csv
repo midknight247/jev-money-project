@@ -1,0 +1,21 @@
+id,message,expected_category,expected_urgency,expected_escalate
+1,"My recurring payment didn't go through.",billing,2.5,0
+2,"Can I get my money back for this purchase?",billing,2.5,0
+3,"I was billed for something I never ordered.",billing,3.0,1
+4,"The payment on my card failed twice.",billing,3.0,0
+5,"Someone charged my account without my permission.",billing,4.0,1
+6,"I need to cancel the subscription I just paid for.",billing,2.0,0
+7,"The application won't open at all.",technical,3.5,0
+8,"Nothing loads when I try to access the dashboard.",technical,3.0,0
+9,"The entire service is unavailable right now.",technical,4.0,1
+10,"File uploads stopped working after yesterday's update.",technical,3.0,0
+11,"I can't sign into my account anymore.",technical,2.5,0
+12,"The app freezes every time I try to save a document.",technical,3.0,0
+13,"What plans do you offer?",general,1.0,0
+14,"When does my subscription renew?",general,1.0,0
+15,"Where can I read about your features?",general,1.0,0
+16,"Can I update the name on my account?",general,1.5,0
+17,"Do you offer support on weekends?",general,1.0,0
+18,"How can I contact your sales team?",general,1.0,0
+19,"I've been charged but the service I paid for isn't available.",billing,4.0,1
+20,"The website is down and I have an urgent client presentation.",technical,5.0,1

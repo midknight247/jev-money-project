@@ -1,0 +1,31 @@
+id,message,expected_category,expected_urgency,expected_escalate
+1,"How do I change my payment method?",general,1.0,0
+2,"Why was my card declined when I tried to pay?",billing,2.5,0
+3,"I don't recognize this charge on my account.",billing,3.5,1
+4,"Can I receive a refund for my latest order?",billing,2.5,0
+5,"I was charged twice for the same invoice.",billing,4.0,1
+6,"My monthly payment went through successfully.",billing,1.5,0
+7,"The checkout page keeps showing an error.",technical,3.0,0
+8,"The mobile application crashes when I open it.",technical,3.5,0
+9,"The dashboard has been completely unavailable all morning.",technical,4.5,1
+10,"I cannot upload my document.",technical,3.0,0
+11,"The settings page is not loading.",technical,3.0,0
+12,"My account login is giving me an error.",technical,2.5,0
+13,"What features are included in the basic plan?",general,1.0,0
+14,"How long is the free trial?",general,1.0,0
+15,"Can I change my account email address?",general,1.5,0
+16,"Where do I find your pricing information?",general,1.0,0
+17,"Do you have a mobile application?",general,1.0,0
+18,"How can I contact customer support?",general,1.0,0
+19,"My refund hasn't arrived yet.",billing,3.0,0
+20,"Someone used my card to make a purchase.",billing,4.0,1
+21,"The payment page has been failing since this morning.",billing,3.0,0
+22,"I need help understanding my latest invoice.",billing,1.5,0
+23,"The application freezes whenever I open the reports page.",technical,3.5,0
+24,"The service is down for everyone on my team.",technical,4.5,1
+25,"I keep getting logged out of the application.",technical,2.5,0
+26,"The search function stopped working.",technical,3.0,0
+27,"When will my current subscription end?",general,1.0,0
+28,"Can I switch to a different subscription plan?",general,1.5,0
+29,"What countries do you support?",general,1.0,0
+30,"Where can I find documentation for the API?",general,1.0,0

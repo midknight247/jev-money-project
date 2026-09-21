@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+
+# Generated outputs
+data/integration_test.csv
+data/output_test.csv
+data/jev_results.csv
+results/

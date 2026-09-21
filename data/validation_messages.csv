@@ -1,0 +1,21 @@
+id,message,expected_category,expected_urgency,expected_escalate
+1,"My bank account was charged but my order failed.",billing,4.0,1
+2,"I accidentally paid for the wrong subscription.",billing,2.5,0
+3,"There is a transaction on my statement that I don't recognize.",billing,4.0,1
+4,"Why hasn't my refund appeared yet?",billing,2.5,0
+5,"My payment keeps getting rejected.",billing,3.0,0
+6,"I was charged an unexpected amount.",billing,3.5,1
+7,"The website gives me an error whenever I try to log in.",technical,3.0,0
+8,"The application is crashing whenever I save.",technical,3.5,0
+9,"The entire dashboard has stopped responding.",technical,4.0,0
+10,"Nobody on our team can access the service.",technical,4.5,1
+11,"I cannot upload files to the application anymore.",technical,3.0,0
+12,"The page keeps freezing while I work.",technical,3.0,0
+13,"How often do you release new features?",general,1.0,0
+14,"Can I change my subscription before it renews?",general,1.5,0
+15,"What payment options are available?",general,1.0,0
+16,"Where can I see the different plans?",general,1.0,0
+17,"How do I contact someone about a partnership?",general,1.0,0
+18,"Can I change the information on my profile?",general,1.5,0
+19,"My payment succeeded but I haven't received the product.",billing,3.5,1
+20,"The website is unavailable and I have a meeting in ten minutes.",technical,5.0,1

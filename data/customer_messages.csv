@@ -1,0 +1,21 @@
+id,message,expected_category,expected_urgency,expected_escalate
+1,"I was charged twice for my subscription.",billing,3.5,1
+2,"I want a refund for the payment I made yesterday.",billing,2.5,0
+3,"What payment methods do you accept?",general,1.0,0
+4,"My credit card was declined when I tried to pay.",billing,2.5,0
+5,"I was charged but my order was never created.",billing,3.0,1
+6,"The app crashes whenever I upload a PDF.",technical,3.0,0
+7,"I keep getting an error when trying to log in.",technical,2.5,0
+8,"The website is completely down for me.",technical,4.0,1
+9,"The latest update broke the file upload feature.",technical,3.0,0
+10,"The dashboard is showing an error message.",technical,2.0,0
+11,"What are your business hours?",general,1.0,0
+12,"Can you explain how your subscription works?",general,1.0,0
+13,"Where can I find your documentation?",general,1.0,0
+14,"I would like to know more about your enterprise plan.",general,1.0,0
+15,"Can I change my account email address?",general,1.5,0
+16,"I have been charged three times and nobody has responded to my previous tickets.",billing,4.0,1
+17,"The service has been unavailable for two hours and we need it for an important meeting.",technical,4.0,1
+18,"I think there is a bug in the application.",technical,2.5,0
+19,"I accidentally purchased the wrong plan and want to change it.",billing,2.0,0
+20,"Please tell me whether you support international payments.",general,1.0,0
