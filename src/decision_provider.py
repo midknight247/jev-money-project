@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 
-from models import CustomerMessage, Decision
-
+from src.models import CustomerMessage, Decision
 
 class DecisionProvider(ABC):
 

@@ -1,5 +1,5 @@
-from decision_provider import DecisionProvider
-from models import CustomerMessage, Decision
+from src.decision_provider import DecisionProvider
+from src.models import CustomerMessage, Decision
 
 
 class MockJevAdapter(DecisionProvider):
@@ -11,7 +11,10 @@ class MockJevAdapter(DecisionProvider):
     against Jev later.
     """
 
-    def analyze(self, message: CustomerMessage) -> Decision:
+    def analyze(
+        self,
+        message: CustomerMessage
+    ) -> Decision:
 
         text = message.message.lower()
 
@@ -59,9 +62,11 @@ class MockJevAdapter(DecisionProvider):
             "subscription",
         ]
 
-        if any(signal in text for signal in billing_signals):
+        if any(
+            signal in text
+            for signal in billing_signals
+        ):
 
-            # High-severity billing situations
             if (
                 "charged three times" in text
                 or "charged twice" in text
@@ -96,9 +101,11 @@ class MockJevAdapter(DecisionProvider):
             "upload",
         ]
 
-        if any(signal in text for signal in technical_signals):
+        if any(
+            signal in text
+            for signal in technical_signals
+        ):
 
-            # High-severity technical situations
             if (
                 "completely down" in text
                 or "unavailable for" in text

@@ -17,9 +17,14 @@ class Decision:
 class EvaluationResult:
     message_id: int
     message: str
+
     expected_category: str
     predicted_category: str
+
     expected_urgency: float
     predicted_urgency: float
+
     expected_escalate: bool
     predicted_escalate: bool
+
+    predicted_escalate_probability: float

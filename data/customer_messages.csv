@@ -1,21 +1,31 @@
 id,message,expected_category,expected_urgency,expected_escalate
 1,"I was charged twice for my subscription.",billing,3.5,1
-2,"I want a refund for the payment I made yesterday.",billing,2.5,0
-3,"What payment methods do you accept?",general,1.0,0
-4,"My credit card was declined when I tried to pay.",billing,2.5,0
-5,"I was charged but my order was never created.",billing,3.0,1
-6,"The app crashes whenever I upload a PDF.",technical,3.0,0
-7,"I keep getting an error when trying to log in.",technical,2.5,0
-8,"The website is completely down for me.",technical,4.0,1
-9,"The latest update broke the file upload feature.",technical,3.0,0
-10,"The dashboard is showing an error message.",technical,2.0,0
-11,"What are your business hours?",general,1.0,0
-12,"Can you explain how your subscription works?",general,1.0,0
-13,"Where can I find your documentation?",general,1.0,0
-14,"I would like to know more about your enterprise plan.",general,1.0,0
-15,"Can I change my account email address?",general,1.5,0
-16,"I have been charged three times and nobody has responded to my previous tickets.",billing,4.0,1
-17,"The service has been unavailable for two hours and we need it for an important meeting.",technical,4.0,1
-18,"I think there is a bug in the application.",technical,2.5,0
-19,"I accidentally purchased the wrong plan and want to change it.",billing,2.0,0
-20,"Please tell me whether you support international payments.",general,1.0,0
+2,"I was charged twice for a $2 test transaction.",billing,2.0,0
+3,"I was charged twice for a $5000 purchase and need this resolved today.",billing,4.5,1
+4,"I want to know when my next subscription payment will be.",general,1.0,0
+5,"Why did my subscription payment fail this morning?",billing,2.5,0
+6,"My card was declined while trying to pay an invoice due in 10 minutes.",billing,4.5,1
+7,"I accidentally purchased the wrong plan and want to change it.",billing,2.0,0
+8,"I was charged but my order was never created.",billing,3.5,1
+9,"Can you explain what is included in the Pro plan?",general,1.0,0
+10,"Do you support international payments?",general,1.0,0
+11,"The app crashes occasionally when I upload a PDF.",technical,2.5,0
+12,"The app crashes every time I upload a PDF and I cannot submit my report.",technical,4.0,1
+13,"The dashboard shows an error message, but everything still works.",technical,1.5,0
+14,"The dashboard shows an error and I cannot access any customer records.",technical,4.0,1
+15,"I think there is a bug in the application.",technical,2.0,0
+16,"I think there is a bug and it has deleted three hours of my work.",technical,4.5,1
+17,"The website was unavailable for five minutes.",technical,2.0,0
+18,"The entire website has been unavailable for six hours.",technical,4.5,1
+19,"The service is down and we need it for an important meeting in 20 minutes.",technical,5.0,1
+20,"The latest update changed the layout of the dashboard.",technical,1.5,0
+21,"The latest update broke file uploads for every employee on our team.",technical,4.5,1
+22,"Where can I find your documentation?",general,1.0,0
+23,"How do I change my account email address?",general,1.5,0
+24,"I need to change my account email before I can access an important document.",general,2.5,0
+25,"Nobody has responded to my support ticket for three weeks.",general,3.0,1
+26,"Nobody has responded to my support ticket and I have already contacted support four times.",general,4.0,1
+27,"I received an email saying my payment failed, but the payment actually went through.",billing,3.5,1
+28,"I received an email about payment methods. Where can I read more about them?",general,1.0,0
+29,"My login is broken and I have a client presentation starting in 15 minutes.",technical,4.5,1
+30,"I cannot log in, but I am just checking whether my old account is still active.",technical,1.5,0
