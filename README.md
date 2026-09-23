@@ -14,10 +14,11 @@ The current system can:
 * estimate issue urgency on a 1–5 scale
 * estimate escalation probability
 * apply an application-level escalation threshold
-* run against either a deterministic mock provider or the JEV/TypeSafe provider
+* run against either a deterministic mock provider or the JEV / TypeSafe provider
 * evaluate providers against labeled datasets
 * compare JEV performance against a rule-based baseline
-* generate a reproducible benchmark report
+* generate a standardized benchmark report
+* expose the decision engine through a FastAPI API
 
 The next development phase is to turn the decision engine into a small user-facing product/API rather than continuing to optimize the benchmark indefinitely.
 
@@ -35,11 +36,11 @@ contains several pieces of operational information:
 
 ```text
 Category       → billing
-Urgency        → high
-Escalation    → likely human review
+Urgency        → moderate/high
+Escalation     → human review may be required
 ```
 
-This project explores whether JEV can reliably extract these structured decisions from natural-language support messages.
+This project explores whether JEV can reliably extract structured decisions from natural-language support messages.
 
 The intended longer-term product direction is **support-ticket triage and prioritization**.
 
@@ -60,8 +61,8 @@ The intended longer-term product direction is **support-ticket triage and priori
               ┌────────────┴────────────┐
               │                         │
               ▼                         ▼
-      MockJevAdapter              JevAdapter
-      deterministic               JEV / TypeSafe
+       MockJevAdapter              JevAdapter
+       deterministic              JEV / TypeSafe
               │                         │
               └────────────┬────────────┘
                            ▼
@@ -69,16 +70,16 @@ The intended longer-term product direction is **support-ticket triage and priori
                            │
               ┌────────────┼────────────┐
               ▼            ▼            ▼
-           Category     Urgency    Escalation
-                                      probability
-                                           │
-                                           ▼
+          Category      Urgency     Escalation
+                                    probability
+                                         │
+                                         ▼
                                   Application policy
                                   threshold = 0.50
-                                           │
-                              ┌────────────┴────────────┐
-                              ▼                         ▼
-                       Normal workflow             Human review
+                                         │
+                           ┌─────────────┴─────────────┐
+                           ▼                           ▼
+                    Normal workflow              Human review
 ```
 
 A key design principle is that **JEV produces the decision signal, while the application owns the business policy**.
@@ -89,7 +90,7 @@ The model/provider does not directly trigger an operational action.
 
 ## Decision Outputs
 
-Each message produces a decision containing:
+Each message produces a decision containing three primary outputs.
 
 ### Category
 
@@ -101,7 +102,7 @@ One of:
 
 ### Urgency
 
-A score from:
+A score from 1 to 5:
 
 ```text
 1 → Very low / informational
@@ -111,11 +112,11 @@ A score from:
 5 → Critical
 ```
 
-### Escalation probability
+### Escalation Probability
 
 A probability-like score between `0` and `1`.
 
-The current evaluation pipeline uses:
+The current application/evaluation policy uses:
 
 ```text
 escalation probability >= 0.50
@@ -131,6 +132,7 @@ The threshold is an **application policy**, separate from the JEV model output.
 
 ```text
 jev_money_project/
+
 │
 ├── src/
 │   ├── decision_engine.py
@@ -151,11 +153,12 @@ jev_money_project/
 ├── benchmark_report.md
 ├── generate_benchmark_report.py
 ├── evaluate_jev.py
+├── requirements.txt
 ├── README.md
 └── ...
 ```
 
-### Core components
+### Core Components
 
 **`DecisionEngine`**
 
@@ -187,7 +190,7 @@ Contains the decision categories, urgency definitions, and escalation specificat
 
 The project uses separate development, validation, and test datasets.
 
-Current benchmark:
+### Dataset Sizes
 
 | Dataset     | Examples |
 | ----------- | -------: |
@@ -206,7 +209,7 @@ Current benchmark:
 | Test        | Rule-based baseline |             70.0% |               80.0% |       0.875 |
 | Test        | JEV                 |            100.0% |               90.0% |       0.401 |
 
-### Observed difference
+### Observed Difference
 
 Compared with the deterministic baseline, JEV showed:
 
@@ -215,9 +218,11 @@ Compared with the deterministic baseline, JEV showed:
 * higher escalation accuracy on validation and test
 * equal escalation accuracy on development
 
-These results demonstrate performance on the supplied benchmark datasets. They **do not establish production-level reliability or generalization to arbitrary real-world support traffic**.
+These results describe performance on the supplied benchmark datasets. They **do not establish production-level reliability or generalization to arbitrary real-world support traffic**.
 
 The current test set contains only 20 examples, so the reported 100% category accuracy should not be interpreted as evidence of generalization.
+
+JEV outputs can also be stochastic, meaning individual evaluations may vary between runs.
 
 ---
 
@@ -279,7 +284,7 @@ This distinction is intentional: benchmark experiments should not be silently mi
 
 ## Environment Setup
 
-Create and activate a virtual environment:
+Create a virtual environment:
 
 ```powershell
 python -m venv .venv
@@ -314,6 +319,8 @@ Expected output:
 ```text
 True
 ```
+
+The API key should be supplied through an environment variable and should **not** be committed to the repository.
 
 ---
 
@@ -371,9 +378,80 @@ results/evaluation.json
 
 ---
 
+## API
+
+The project exposes the decision engine through a FastAPI service.
+
+### Run Locally
+
+Start the API with:
+
+```powershell
+uvicorn src.api:app --reload
+```
+
+The API will be available at:
+
+```text
+http://127.0.0.1:8000
+```
+
+### Interactive Documentation
+
+FastAPI provides interactive API documentation at:
+
+```text
+http://127.0.0.1:8000/docs
+```
+
+### Health Check
+
+```text
+GET /health
+```
+
+Example response:
+
+```json
+{
+  "status": "ok"
+}
+```
+
+### Decision Endpoint
+
+```text
+POST /analyze
+```
+
+Example request:
+
+```json
+{
+  "message": "I was charged twice for the same purchase."
+}
+```
+
+Example response:
+
+```json
+{
+  "category": "billing",
+  "urgency": 2.81,
+  "escalation_probability": 0.88,
+  "action": "ESCALATE"
+}
+```
+
+The `action` is determined by the application-level escalation policy using the configured threshold. JEV provides the underlying escalation probability.
+
+Because JEV is stochastic, example response values are illustrative and may vary between runs.
+
+---
+
 ## Design Principles
 
-### 1. Provider abstraction
+### 1. Provider Abstraction
 
 The application should not depend directly on a specific AI provider.
 
@@ -387,7 +465,7 @@ JEV / Mock / Future provider
 
 This makes experimentation and replacement easier.
 
-### 2. Separate prediction from policy
+### 2. Separate Prediction from Policy
 
 JEV produces a decision signal.
 
@@ -397,17 +475,11 @@ For example:
 
 ```text
 JEV:
+
 escalation_probability = 0.78
 
 Application:
-0.78 < 0.85
-        ↓
-normal workflow
-```
 
-or, under the current benchmark policy:
-
-```text
 0.78 >= 0.50
         ↓
 human review
@@ -415,19 +487,27 @@ human review
 
 The threshold is therefore a business/application decision rather than something inherently dictated by the model.
 
-### 3. Benchmark against a baseline
+### 3. Benchmark Against a Baseline
 
 Performance is evaluated against a deterministic baseline rather than relying only on subjective impressions.
 
-### 4. Keep benchmark data separate
+### 4. Keep Benchmark Data Separate
 
 Development, validation, and test data are treated as separate evaluation splits.
 
-### 5. Do not overclaim
+### 5. Do Not Overclaim
 
 High benchmark performance on small datasets does not automatically imply production reliability.
 
 Real-world validation is still required.
+
+### 6. Keep AI Signals Separate from Operational Actions
+
+The provider produces structured signals such as category, urgency, and escalation probability.
+
+The application layer decides what operational action should follow.
+
+This separation allows business rules to change without modifying the underlying provider.
 
 ---
 
@@ -465,11 +545,12 @@ Important limitations include:
 * [x] Document benchmark methodology
 * [x] Generate benchmark report
 * [x] Push benchmark milestone to GitHub
+* [x] Expose the decision engine through an API
 
 ### Next
 
 * [ ] Build a small user-facing triage interface
-* [ ] Expose the decision engine through an API
+* [ ] Deploy the API as a publicly accessible service
 * [ ] Add support-ticket ingestion
 * [ ] Add human-review workflow
 * [ ] Add batch processing
@@ -478,7 +559,9 @@ Important limitations include:
 * [ ] Measure operational time saved
 * [ ] Validate whether external users find the system useful
 
-### Longer term
+---
+
+## Longer-Term Possibilities
 
 The underlying architecture can potentially support other structured-decision workflows such as:
 
@@ -495,6 +578,8 @@ Operations automation
 ```
 
 These are future possibilities, not current product claims.
+
+The architecture is intentionally provider-agnostic so that the same application pattern can be evaluated with different decision providers and domain-specific specifications.
 
 ---
 
