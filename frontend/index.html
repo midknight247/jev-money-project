@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>JEV Support Intelligence</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <main class="app">
+
+        <header class="header">
+            <div>
+                <span class="eyebrow">JEV</span>
+                <h1>Support Intelligence</h1>
+                <p>
+                    Analyze customer messages and identify
+                    issues that need escalation.
+                </p>
+            </div>
+        </header>
+
+
+        <section class="input-section">
+
+            <label for="message">
+                Customer message
+            </label>
+
+            <textarea
+                id="message"
+                placeholder="Example: I was charged twice for the same purchase."
+                rows="6"
+            ></textarea>
+
+            <button id="analyzeButton">
+                Analyze Message
+            </button>
+
+        </section>
+
+
+        <section
+            id="result"
+            class="result hidden"
+        >
+
+            <div class="result-header">
+
+                <div>
+                    <span class="result-label">
+                        CATEGORY
+                    </span>
+
+                    <h2 id="category">
+                        —
+                    </h2>
+                </div>
+
+                <div id="actionBadge" class="action-badge">
+                    —
+                </div>
+
+            </div>
+
+
+            <div class="metrics">
+
+                <div class="metric">
+
+                    <div class="metric-header">
+                        <span>Urgency</span>
+                        <strong id="urgency">
+                            —
+                        </strong>
+                    </div>
+
+                    <div class="progress">
+                        <div
+                            id="urgencyBar"
+                            class="progress-fill"
+                        ></div>
+                    </div>
+
+                </div>
+
+
+                <div class="metric">
+
+                    <div class="metric-header">
+                        <span>Escalation probability</span>
+                        <strong id="escalation">
+                            —
+                        </strong>
+                    </div>
+
+                    <div class="progress">
+                        <div
+                            id="escalationBar"
+                            class="progress-fill"
+                        ></div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <p
+            id="error"
+            class="error hidden"
+        ></p>
+
+    </main>
+
+
+    <script src="app.js"></script>
+
+</body>
+</html>
