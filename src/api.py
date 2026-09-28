@@ -75,3 +75,11 @@ def analyze_message(request: MessageRequest):
         escalation_probability=decision.escalate_probability,
         action=action,
     )
+
+@app.get("/")
+def root():
+    return {
+        "name": "JEV Support Intelligence API",
+        "status": "running",
+        "docs": "/docs"
+    }
