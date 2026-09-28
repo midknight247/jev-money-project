@@ -15,6 +15,10 @@ const actionBadge = document.getElementById("actionBadge");
 const urgencyBar = document.getElementById("urgencyBar");
 const escalationBar = document.getElementById("escalationBar");
 
+const historySection = document.getElementById("historySection");
+const historyList = document.getElementById("historyList");
+const clearHistoryButton = document.getElementById("clearHistoryButton");
+
 const history = [];
 
 
@@ -52,7 +56,10 @@ function showResult(data) {
      * Escalation probability is already between 0 and 1.
      */
     const escalationPercentage =
-        Math.min(Math.max(data.escalation_probability, 0), 1) * 100;
+        Math.min(
+            Math.max(data.escalation_probability, 0),
+            1
+        ) * 100;
 
     urgencyBar.style.width =
         `${urgencyPercentage}%`;
@@ -64,51 +71,188 @@ function showResult(data) {
 }
 
 
+function renderHistory() {
+
+    historyList.innerHTML = "";
+
+    if (history.length === 0) {
+        historySection.classList.add("hidden");
+        return;
+    }
+
+    historySection.classList.remove("hidden");
+
+    /*
+     * Show the newest analysis first.
+     */
+    const reversedHistory = [...history].reverse();
+
+    reversedHistory.forEach((item) => {
+
+        const historyItem =
+            document.createElement("div");
+
+        historyItem.className = "history-item";
+
+
+        const messageElement =
+            document.createElement("p");
+
+        messageElement.className =
+            "history-message";
+
+        messageElement.textContent =
+            item.message;
+
+
+        const detailsElement =
+            document.createElement("div");
+
+        detailsElement.className =
+            "history-details";
+
+
+        const categoryElement =
+            document.createElement("span");
+
+        categoryElement.textContent =
+            item.result.category;
+
+
+        const urgencyElement =
+            document.createElement("span");
+
+        urgencyElement.textContent =
+            `Urgency ${Number(
+                item.result.urgency
+            ).toFixed(2)}`;
+
+
+        const escalationElement =
+            document.createElement("span");
+
+        escalationElement.textContent =
+            `Escalation ${Math.round(
+                item.result.escalation_probability * 100
+            )}%`;
+
+
+        const actionElement =
+            document.createElement("span");
+
+        actionElement.textContent =
+            item.result.action;
+
+
+        detailsElement.appendChild(
+            categoryElement
+        );
+
+        detailsElement.appendChild(
+            urgencyElement
+        );
+
+        detailsElement.appendChild(
+            escalationElement
+        );
+
+        detailsElement.appendChild(
+            actionElement
+        );
+
+
+        historyItem.appendChild(
+            messageElement
+        );
+
+        historyItem.appendChild(
+            detailsElement
+        );
+
+
+        historyList.appendChild(
+            historyItem
+        );
+    });
+}
+
+
 async function analyzeMessage() {
-    const message = messageInput.value.trim();
+
+    const message =
+        messageInput.value.trim();
 
     hideError();
 
+
     if (!message) {
-        showError("Please enter a customer message.");
+
+        showError(
+            "Please enter a customer message."
+        );
+
         messageInput.focus();
+
         return;
     }
+
 
     analyzeButton.disabled = true;
     analyzeButton.textContent = "Analyzing...";
 
+
     try {
-        const response = await fetch(API_URL, {
-            method: "POST",
 
-            headers: {
-                "Content-Type": "application/json"
-            },
+        const response =
+            await fetch(
+                API_URL,
+                {
+                    method: "POST",
 
-            body: JSON.stringify({
-                message: message
-            })
-        });
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        message: message
+                    })
+                }
+            );
+
 
         if (!response.ok) {
+
             throw new Error(
                 `API request failed with status ${response.status}.`
             );
         }
 
-        const data = await response.json();
+
+        const data =
+            await response.json();
+
 
         history.push({
             message: message,
             result: data
         });
 
-        console.log(history);
 
         showResult(data);
 
+        renderHistory();
+
+
+        /*
+         * Clear the input after a successful analysis
+         * so the user can immediately enter another message.
+         */
+        messageInput.value = "";
+
+
     } catch (error) {
+
         console.error(error);
 
         showError(
@@ -116,10 +260,21 @@ async function analyzeMessage() {
             "Make sure the FastAPI server is running."
         );
 
+
     } finally {
+
         analyzeButton.disabled = false;
-        analyzeButton.textContent = "Analyze Message";
+        analyzeButton.textContent =
+            "Analyze Message";
     }
+}
+
+
+function clearHistory() {
+
+    history.length = 0;
+
+    renderHistory();
 }
 
 
@@ -129,13 +284,21 @@ analyzeButton.addEventListener(
 );
 
 
+clearHistoryButton.addEventListener(
+    "click",
+    clearHistory
+);
+
+
 messageInput.addEventListener(
     "keydown",
     (event) => {
+
         if (
             event.key === "Enter" &&
             (event.ctrlKey || event.metaKey)
         ) {
+
             analyzeMessage();
         }
     }
