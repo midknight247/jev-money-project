@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from src.decision_engine import DecisionEngine
@@ -6,12 +7,21 @@ from src.jev_adapter import JevAdapter
 from src.models import CustomerMessage
 
 
-ESCALATION_THRESHOLD = 0.5
+ESCALATION_THRESHOLD = 0.40
 
 
 app = FastAPI(
     title="JEV Support Triage API",
     version="0.1.0",
+)
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 
