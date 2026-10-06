@@ -7,13 +7,22 @@
 :root {
     --bg: #f5f7fb;
     --surface: #ffffff;
+    --surface-soft: #f8fafc;
     --border: #e5e7eb;
+    --border-strong: #d1d5db;
+
     --text: #111827;
     --muted: #6b7280;
+
     --accent: #111827;
     --accent-hover: #000000;
+
     --danger: #dc2626;
     --danger-bg: #fef2f2;
+
+    --success: #15803d;
+    --success-bg: #f0fdf4;
+
     --track: #e5e7eb;
 }
 
@@ -21,6 +30,7 @@ body {
     min-height: 100vh;
     background: var(--bg);
     color: var(--text);
+
     font-family:
         Inter,
         ui-sans-serif,
@@ -46,9 +56,11 @@ body {
 .eyebrow {
     display: inline-block;
     margin-bottom: 12px;
+
     font-size: 13px;
     font-weight: 800;
     letter-spacing: 0.16em;
+
     color: var(--muted);
 }
 
@@ -61,6 +73,7 @@ body {
 
 .header p {
     max-width: 560px;
+
     color: var(--muted);
     font-size: 17px;
     line-height: 1.6;
@@ -70,15 +83,18 @@ body {
 
 .input-section {
     padding: 28px;
+
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 20px;
+
     box-shadow: 0 8px 30px rgba(17, 24, 39, 0.04);
 }
 
 .input-section label {
     display: block;
     margin-bottom: 10px;
+
     font-size: 14px;
     font-weight: 700;
 }
@@ -115,7 +131,9 @@ textarea::placeholder {
 textarea:focus {
     background: white;
     border-color: #9ca3af;
-    box-shadow: 0 0 0 4px rgba(17, 24, 39, 0.06);
+
+    box-shadow:
+        0 0 0 4px rgba(17, 24, 39, 0.06);
 }
 
 button {
@@ -161,7 +179,6 @@ button:disabled {
 
 .result {
     margin-top: 24px;
-
     padding: 28px;
 
     background: var(--surface);
@@ -192,6 +209,7 @@ button:disabled {
     gap: 20px;
 
     padding-bottom: 24px;
+
     border-bottom: 1px solid var(--border);
 }
 
@@ -271,11 +289,213 @@ button:disabled {
     transition: width 0.6s ease;
 }
 
+/* Triage History */
+
+.history-section {
+    margin-top: 48px;
+
+    animation: resultIn 0.3s ease;
+}
+
+.history-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    margin-bottom: 16px;
+}
+
+.history-header h2 {
+    font-size: 22px;
+    letter-spacing: -0.02em;
+}
+
+.clear-button {
+    width: auto;
+    margin: 0;
+
+    padding: 8px 12px;
+
+    background: transparent;
+    color: var(--muted);
+
+    border: 1px solid var(--border);
+    border-radius: 9px;
+
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.clear-button:hover {
+    background: var(--surface);
+    color: var(--text);
+    border-color: var(--border-strong);
+
+    transform: none;
+}
+
+/* History list */
+
+.history-list {
+    display: grid;
+    gap: 12px;
+}
+
+/* Individual history card */
+
+.history-card {
+    padding: 18px;
+
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: 16px;
+
+    box-shadow: 0 4px 18px rgba(17, 24, 39, 0.035);
+
+    animation: historyIn 0.25s ease;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+}
+
+.history-card:hover {
+    border-color: var(--border-strong);
+
+    box-shadow:
+        0 8px 24px rgba(17, 24, 39, 0.06);
+
+    transform: translateY(-1px);
+}
+
+@keyframes historyIn {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* History message */
+
+.history-message {
+    margin-bottom: 16px;
+
+    color: var(--text);
+
+    font-size: 14px;
+    line-height: 1.55;
+}
+
+/* History metadata */
+
+.history-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 12px;
+
+    padding-top: 14px;
+
+    border-top: 1px solid var(--border);
+}
+
+.history-details {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+    gap: 8px;
+}
+
+/* Category pill */
+
+.history-category {
+    display: inline-flex;
+    align-items: center;
+
+    padding: 5px 9px;
+
+    border-radius: 999px;
+
+    background: var(--surface-soft);
+    border: 1px solid var(--border);
+
+    color: var(--text);
+
+    font-size: 11px;
+    font-weight: 800;
+
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Metric pills */
+
+.history-stat {
+    color: var(--muted);
+
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.history-stat strong {
+    color: var(--text);
+    font-weight: 700;
+}
+
+/* History action */
+
+.history-action {
+    flex-shrink: 0;
+
+    padding: 6px 10px;
+
+    border-radius: 999px;
+
+    font-size: 10px;
+    font-weight: 800;
+
+    letter-spacing: 0.06em;
+}
+
+.history-action.escalate {
+    background: var(--danger-bg);
+    color: var(--danger);
+}
+
+.history-action.normal {
+    background: var(--success-bg);
+    color: var(--success);
+}
+
+/* Empty history */
+
+.history-empty {
+    padding: 24px;
+
+    border: 1px dashed var(--border-strong);
+    border-radius: 16px;
+
+    color: var(--muted);
+
+    text-align: center;
+    font-size: 14px;
+}
+
 /* Error */
 
 .error {
     margin-top: 16px;
-
     padding: 14px 16px;
 
     border: 1px solid #fecaca;
@@ -321,6 +541,19 @@ button:disabled {
     }
 
     .action-badge {
+        align-self: flex-start;
+    }
+
+    .history-header {
+        align-items: flex-start;
+    }
+
+    .history-meta {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .history-action {
         align-self: flex-start;
     }
 }

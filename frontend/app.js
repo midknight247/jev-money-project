@@ -45,21 +45,11 @@ function showResult(data) {
 
     actionBadge.textContent = data.action;
 
-    /*
-     * Urgency is on a 0-5 scale.
-     * Convert it to a percentage for the progress bar.
-     */
     const urgencyPercentage =
         Math.min(Math.max(data.urgency / 5, 0), 1) * 100;
 
-    /*
-     * Escalation probability is already between 0 and 1.
-     */
     const escalationPercentage =
-        Math.min(
-            Math.max(data.escalation_probability, 0),
-            1
-        ) * 100;
+        Math.min(Math.max(data.escalation_probability, 0), 1) * 100;
 
     urgencyBar.style.width =
         `${urgencyPercentage}%`;
@@ -72,7 +62,6 @@ function showResult(data) {
 
 
 function renderHistory() {
-
     historyList.innerHTML = "";
 
     if (history.length === 0) {
@@ -82,177 +71,119 @@ function renderHistory() {
 
     historySection.classList.remove("hidden");
 
-    /*
-     * Show the newest analysis first.
-     */
-    const reversedHistory = [...history].reverse();
+    history
+        .slice()
+        .reverse()
+        .forEach((item) => {
+            const card = document.createElement("article");
 
-    reversedHistory.forEach((item) => {
+            card.className = "history-card";
 
-        const historyItem =
-            document.createElement("div");
+            const message = document.createElement("p");
+            message.className = "history-message";
+            message.textContent = item.message;
 
-        historyItem.className = "history-item";
+            const meta = document.createElement("div");
+            meta.className = "history-meta";
 
+            const details = document.createElement("div");
+            details.className = "history-details";
 
-        const messageElement =
-            document.createElement("p");
+            const category = document.createElement("span");
+            category.className = "history-category";
+            category.textContent = item.result.category;
 
-        messageElement.className =
-            "history-message";
+            const urgency = document.createElement("span");
+            urgency.className = "history-stat";
 
-        messageElement.textContent =
-            item.message;
+            const urgencyValue = document.createElement("strong");
+            urgencyValue.textContent =
+                `${Number(item.result.urgency).toFixed(2)} / 5`;
 
+            urgency.textContent = "Urgency ";
+            urgency.appendChild(urgencyValue);
 
-        const detailsElement =
-            document.createElement("div");
+            const escalation = document.createElement("span");
+            escalation.className = "history-stat";
 
-        detailsElement.className =
-            "history-details";
+            const escalationValue = document.createElement("strong");
+            escalationValue.textContent =
+                `${Math.round(item.result.escalation_probability * 100)}%`;
 
+            escalation.textContent = "Escalation ";
+            escalation.appendChild(escalationValue);
 
-        const categoryElement =
-            document.createElement("span");
+            details.appendChild(category);
+            details.appendChild(urgency);
+            details.appendChild(escalation);
 
-        categoryElement.textContent =
-            item.result.category;
+            const action = document.createElement("span");
 
+            action.className =
+                "history-action " +
+                (
+                    item.result.action === "ESCALATE"
+                        ? "escalate"
+                        : "normal"
+                );
 
-        const urgencyElement =
-            document.createElement("span");
+            action.textContent = item.result.action;
 
-        urgencyElement.textContent =
-            `Urgency ${Number(
-                item.result.urgency
-            ).toFixed(2)}`;
+            meta.appendChild(details);
+            meta.appendChild(action);
 
+            card.appendChild(message);
+            card.appendChild(meta);
 
-        const escalationElement =
-            document.createElement("span");
-
-        escalationElement.textContent =
-            `Escalation ${Math.round(
-                item.result.escalation_probability * 100
-            )}%`;
-
-
-        const actionElement =
-            document.createElement("span");
-
-        actionElement.textContent =
-            item.result.action;
-
-
-        detailsElement.appendChild(
-            categoryElement
-        );
-
-        detailsElement.appendChild(
-            urgencyElement
-        );
-
-        detailsElement.appendChild(
-            escalationElement
-        );
-
-        detailsElement.appendChild(
-            actionElement
-        );
-
-
-        historyItem.appendChild(
-            messageElement
-        );
-
-        historyItem.appendChild(
-            detailsElement
-        );
-
-
-        historyList.appendChild(
-            historyItem
-        );
-    });
+            historyList.appendChild(card);
+        });
 }
 
 
 async function analyzeMessage() {
-
-    const message =
-        messageInput.value.trim();
+    const message = messageInput.value.trim();
 
     hideError();
 
-
     if (!message) {
-
-        showError(
-            "Please enter a customer message."
-        );
-
+        showError("Please enter a customer message.");
         messageInput.focus();
-
         return;
     }
-
 
     analyzeButton.disabled = true;
     analyzeButton.textContent = "Analyzing...";
 
-
     try {
+        const response = await fetch(API_URL, {
+            method: "POST",
 
-        const response =
-            await fetch(
-                API_URL,
-                {
-                    method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
 
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
-
-                    body: JSON.stringify({
-                        message: message
-                    })
-                }
-            );
-
+            body: JSON.stringify({
+                message: message
+            })
+        });
 
         if (!response.ok) {
-
             throw new Error(
                 `API request failed with status ${response.status}.`
             );
         }
 
-
-        const data =
-            await response.json();
-
+        const data = await response.json();
 
         history.push({
             message: message,
             result: data
         });
 
-
         showResult(data);
-
         renderHistory();
 
-
-        /*
-         * Clear the input after a successful analysis
-         * so the user can immediately enter another message.
-         */
-        messageInput.value = "";
-
-
     } catch (error) {
-
         console.error(error);
 
         showError(
@@ -260,20 +191,15 @@ async function analyzeMessage() {
             "Make sure the FastAPI server is running."
         );
 
-
     } finally {
-
         analyzeButton.disabled = false;
-        analyzeButton.textContent =
-            "Analyze Message";
+        analyzeButton.textContent = "Analyze Message";
     }
 }
 
 
 function clearHistory() {
-
     history.length = 0;
-
     renderHistory();
 }
 
@@ -293,12 +219,10 @@ clearHistoryButton.addEventListener(
 messageInput.addEventListener(
     "keydown",
     (event) => {
-
         if (
             event.key === "Enter" &&
             (event.ctrlKey || event.metaKey)
         ) {
-
             analyzeMessage();
         }
     }
