@@ -1,5 +1,7 @@
 const API_URL = "https://jev-money-project.onrender.com/analyze";
 
+const HISTORY_STORAGE_KEY = "jev_triage_history";
+
 const messageInput = document.getElementById("message");
 const analyzeButton = document.getElementById("analyzeButton");
 
@@ -19,8 +21,61 @@ const historySection = document.getElementById("historySection");
 const historyList = document.getElementById("historyList");
 const clearHistoryButton = document.getElementById("clearHistoryButton");
 
-const history = [];
 
+// -----------------------------------------------------------------------------
+// History
+// -----------------------------------------------------------------------------
+
+let history = loadHistory();
+
+
+function loadHistory() {
+    try {
+        const storedHistory =
+            localStorage.getItem(HISTORY_STORAGE_KEY);
+
+        if (!storedHistory) {
+            return [];
+        }
+
+        const parsedHistory = JSON.parse(storedHistory);
+
+        if (!Array.isArray(parsedHistory)) {
+            return [];
+        }
+
+        return parsedHistory;
+
+    } catch (error) {
+        console.error(
+            "Could not load triage history:",
+            error
+        );
+
+        return [];
+    }
+}
+
+
+function saveHistory() {
+    try {
+        localStorage.setItem(
+            HISTORY_STORAGE_KEY,
+            JSON.stringify(history)
+        );
+
+    } catch (error) {
+        console.error(
+            "Could not save triage history:",
+            error
+        );
+    }
+}
+
+
+// -----------------------------------------------------------------------------
+// Error handling
+// -----------------------------------------------------------------------------
 
 function hideError() {
     errorMessage.classList.add("hidden");
@@ -33,6 +88,10 @@ function showError(message) {
     errorMessage.classList.remove("hidden");
 }
 
+
+// -----------------------------------------------------------------------------
+// Result
+// -----------------------------------------------------------------------------
 
 function showResult(data) {
     categoryElement.textContent = data.category;
@@ -60,6 +119,10 @@ function showResult(data) {
     resultSection.classList.remove("hidden");
 }
 
+
+// -----------------------------------------------------------------------------
+// History rendering
+// -----------------------------------------------------------------------------
 
 function renderHistory() {
     historyList.innerHTML = "";
@@ -140,6 +203,10 @@ function renderHistory() {
 }
 
 
+// -----------------------------------------------------------------------------
+// Analyze
+// -----------------------------------------------------------------------------
+
 async function analyzeMessage() {
     const message = messageInput.value.trim();
 
@@ -180,6 +247,8 @@ async function analyzeMessage() {
             result: data
         });
 
+        saveHistory();
+
         showResult(data);
         renderHistory();
 
@@ -198,11 +267,24 @@ async function analyzeMessage() {
 }
 
 
+// -----------------------------------------------------------------------------
+// Clear history
+// -----------------------------------------------------------------------------
+
 function clearHistory() {
-    history.length = 0;
+    history = [];
+
+    localStorage.removeItem(
+        HISTORY_STORAGE_KEY
+    );
+
     renderHistory();
 }
 
+
+// -----------------------------------------------------------------------------
+// Event listeners
+// -----------------------------------------------------------------------------
 
 analyzeButton.addEventListener(
     "click",
@@ -227,3 +309,10 @@ messageInput.addEventListener(
         }
     }
 );
+
+
+// -----------------------------------------------------------------------------
+// Initial render
+// -----------------------------------------------------------------------------
+
+renderHistory();
