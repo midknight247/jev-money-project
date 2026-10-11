@@ -557,3 +557,57 @@ button:disabled {
         align-self: flex-start;
     }
 }
+
+
+/* Decision explanation */
+.explanation-section {
+    margin-top: 24px;
+    padding: 20px 22px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background: #f8fafc;
+}
+
+.explanation-section h3 {
+    margin: 0 0 16px;
+    font-size: 1.1rem;
+    line-height: 1.4;
+}
+
+.explanation-list {
+    margin: 0;
+    padding-left: 22px;
+}
+
+.explanation-list li {
+    padding-left: 4px;
+    margin-bottom: 12px;
+    line-height: 1.7;
+}
+
+.explanation-list li:last-child {
+    margin-bottom: 0;
+}
+
+/* Keep saved explanations readable too */
+.history-explanation {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.history-explanation summary {
+    cursor: pointer;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+.history-explanation ul {
+    margin: 12px 0 0;
+    padding-left: 22px;
+}
+
+.history-explanation li {
+    margin-bottom: 10px;
+    line-height: 1.6;
+}
