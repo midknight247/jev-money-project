@@ -60,6 +60,7 @@ class DecisionResponse(BaseModel):
     urgency: float
     escalation_probability: float
     action: str
+    explanation: list[str]
 
 
 # -----------------------------------------------------------------------------
@@ -77,6 +78,40 @@ def get_action(escalation_probability: float) -> str:
 
     return "NORMAL SUPPORT"
 
+def get_explanation(
+    category: str,
+    urgency: float,
+    escalation_probability: float,
+    action: str,
+) -> list[str]:
+    threshold_percent = ESCALATION_THRESHOLD * 100
+    probability_percent = escalation_probability * 100
+
+    explanation = [
+        f"Jev classified the message as {category}.",
+        f"Jev assigned an urgency score of {urgency:.1f}/5.",
+        (
+            f"Jev estimated the escalation probability at "
+            f"{probability_percent:.1f}%."
+        ),
+        (
+            f"The configured escalation threshold is "
+            f"{threshold_percent:.0f}%."
+        ),
+    ]
+
+    if action == "ESCALATE":
+        explanation.append(
+            "Routing rule: escalation probability meets or exceeds "
+            "the configured threshold, so the message is escalated."
+        )
+    else:
+        explanation.append(
+            "Routing rule: escalation probability is below the "
+            "configured threshold, so the message remains in normal support."
+        )
+
+    return explanation
 
 # -----------------------------------------------------------------------------
 # Routes
@@ -143,6 +178,12 @@ def analyze_message(request: MessageRequest):
             urgency=decision.urgency,
             escalation_probability=decision.escalate_probability,
             action=action,
+             explanation=get_explanation(
+                 category=decision.category,
+                 urgency=decision.urgency,
+                 escalation_probability=decision.escalate_probability,
+                 action=action,
+            ),
         )
 
     except Exception:
