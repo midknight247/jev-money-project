@@ -47,11 +47,7 @@ function loadHistory() {
         return parsedHistory;
 
     } catch (error) {
-        console.error(
-            "Could not load triage history:",
-            error
-        );
-
+        console.error("Could not load triage history:", error);
         return [];
     }
 }
@@ -65,10 +61,7 @@ function saveHistory() {
         );
 
     } catch (error) {
-        console.error(
-            "Could not save triage history:",
-            error
-        );
+        console.error("Could not save triage history:", error);
     }
 }
 
@@ -86,6 +79,56 @@ function hideError() {
 function showError(message) {
     errorMessage.textContent = message;
     errorMessage.classList.remove("hidden");
+}
+
+
+// -----------------------------------------------------------------------------
+// Decision explanation
+// -----------------------------------------------------------------------------
+
+function renderExplanation(explanation) {
+    let explanationSection =
+        document.getElementById("explanationSection");
+
+    // Create the section dynamically so index.html does not need editing.
+    if (!explanationSection) {
+        explanationSection = document.createElement("section");
+        explanationSection.id = "explanationSection";
+        explanationSection.className = "explanation-section";
+
+        const heading = document.createElement("h3");
+        heading.textContent = "Decision Explanation";
+
+        const explanationList = document.createElement("ul");
+        explanationList.id = "explanationList";
+        explanationList.className = "explanation-list";
+
+        explanationSection.appendChild(heading);
+        explanationSection.appendChild(explanationList);
+
+        resultSection.appendChild(explanationSection);
+    }
+
+    const explanationList =
+        explanationSection.querySelector("#explanationList");
+
+    explanationList.replaceChildren();
+
+    if (!Array.isArray(explanation) || explanation.length === 0) {
+        const item = document.createElement("li");
+        item.textContent =
+            "No explanation was provided by the backend.";
+
+        explanationList.appendChild(item);
+    } else {
+        explanation.forEach((reason) => {
+            const item = document.createElement("li");
+            item.textContent = String(reason);
+            explanationList.appendChild(item);
+        });
+    }
+
+    explanationSection.classList.remove("hidden");
 }
 
 
@@ -110,11 +153,10 @@ function showResult(data) {
     const escalationPercentage =
         Math.min(Math.max(data.escalation_probability, 0), 1) * 100;
 
-    urgencyBar.style.width =
-        `${urgencyPercentage}%`;
+    urgencyBar.style.width = `${urgencyPercentage}%`;
+    escalationBar.style.width = `${escalationPercentage}%`;
 
-    escalationBar.style.width =
-        `${escalationPercentage}%`;
+    renderExplanation(data.explanation);
 
     resultSection.classList.remove("hidden");
 }
@@ -134,72 +176,89 @@ function renderHistory() {
 
     historySection.classList.remove("hidden");
 
-    history
-        .slice()
-        .reverse()
-        .forEach((item) => {
-            const card = document.createElement("article");
+    history.slice().reverse().forEach((item) => {
+        const card = document.createElement("article");
+        card.className = "history-card";
 
-            card.className = "history-card";
+        const message = document.createElement("p");
+        message.className = "history-message";
+        message.textContent = item.message;
 
-            const message = document.createElement("p");
-            message.className = "history-message";
-            message.textContent = item.message;
+        const meta = document.createElement("div");
+        meta.className = "history-meta";
 
-            const meta = document.createElement("div");
-            meta.className = "history-meta";
+        const details = document.createElement("div");
+        details.className = "history-details";
 
-            const details = document.createElement("div");
-            details.className = "history-details";
+        const category = document.createElement("span");
+        category.className = "history-category";
+        category.textContent = item.result.category;
 
-            const category = document.createElement("span");
-            category.className = "history-category";
-            category.textContent = item.result.category;
+        const urgency = document.createElement("span");
+        urgency.className = "history-stat";
 
-            const urgency = document.createElement("span");
-            urgency.className = "history-stat";
+        const urgencyValue = document.createElement("strong");
+        urgencyValue.textContent =
+            `${Number(item.result.urgency).toFixed(2)} / 5`;
 
-            const urgencyValue = document.createElement("strong");
-            urgencyValue.textContent =
-                `${Number(item.result.urgency).toFixed(2)} / 5`;
+        urgency.textContent = "Urgency ";
+        urgency.appendChild(urgencyValue);
 
-            urgency.textContent = "Urgency ";
-            urgency.appendChild(urgencyValue);
+        const escalation = document.createElement("span");
+        escalation.className = "history-stat";
 
-            const escalation = document.createElement("span");
-            escalation.className = "history-stat";
+        const escalationValue = document.createElement("strong");
+        escalationValue.textContent =
+            `${Math.round(item.result.escalation_probability * 100)}%`;
 
-            const escalationValue = document.createElement("strong");
-            escalationValue.textContent =
-                `${Math.round(item.result.escalation_probability * 100)}%`;
+        escalation.textContent = "Escalation ";
+        escalation.appendChild(escalationValue);
 
-            escalation.textContent = "Escalation ";
-            escalation.appendChild(escalationValue);
+        details.appendChild(category);
+        details.appendChild(urgency);
+        details.appendChild(escalation);
 
-            details.appendChild(category);
-            details.appendChild(urgency);
-            details.appendChild(escalation);
+        const action = document.createElement("span");
 
-            const action = document.createElement("span");
+        action.className =
+            "history-action " +
+            (
+                item.result.action === "ESCALATE"
+                    ? "escalate"
+                    : "normal"
+            );
 
-            action.className =
-                "history-action " +
-                (
-                    item.result.action === "ESCALATE"
-                        ? "escalate"
-                        : "normal"
-                );
+        action.textContent = item.result.action;
 
-            action.textContent = item.result.action;
+        meta.appendChild(details);
+        meta.appendChild(action);
 
-            meta.appendChild(details);
-            meta.appendChild(action);
+        card.appendChild(message);
+        card.appendChild(meta);
 
-            card.appendChild(message);
-            card.appendChild(meta);
+        // Display the saved explanation for older results when available.
+        if (Array.isArray(item.result.explanation)) {
+            const savedExplanation = document.createElement("details");
+            savedExplanation.className = "history-explanation";
 
-            historyList.appendChild(card);
-        });
+            const summary = document.createElement("summary");
+            summary.textContent = "View decision explanation";
+
+            const explanationList = document.createElement("ul");
+
+            item.result.explanation.forEach((reason) => {
+                const explanationItem = document.createElement("li");
+                explanationItem.textContent = String(reason);
+                explanationList.appendChild(explanationItem);
+            });
+
+            savedExplanation.appendChild(summary);
+            savedExplanation.appendChild(explanationList);
+            card.appendChild(savedExplanation);
+        }
+
+        historyList.appendChild(card);
+    });
 }
 
 
@@ -224,11 +283,9 @@ async function analyzeMessage() {
     try {
         const response = await fetch(API_URL, {
             method: "POST",
-
             headers: {
                 "Content-Type": "application/json"
             },
-
             body: JSON.stringify({
                 message: message
             })
@@ -256,8 +313,8 @@ async function analyzeMessage() {
         console.error(error);
 
         showError(
-            "Could not connect to the JEV backend. " +
-            "Make sure the FastAPI server is running."
+            "Could not connect to the JEV backend or process its response. " +
+            "Please check the backend and try again."
         );
 
     } finally {
@@ -274,9 +331,7 @@ async function analyzeMessage() {
 function clearHistory() {
     history = [];
 
-    localStorage.removeItem(
-        HISTORY_STORAGE_KEY
-    );
+    localStorage.removeItem(HISTORY_STORAGE_KEY);
 
     renderHistory();
 }
@@ -286,29 +341,18 @@ function clearHistory() {
 // Event listeners
 // -----------------------------------------------------------------------------
 
-analyzeButton.addEventListener(
-    "click",
-    analyzeMessage
-);
+analyzeButton.addEventListener("click", analyzeMessage);
 
+clearHistoryButton.addEventListener("click", clearHistory);
 
-clearHistoryButton.addEventListener(
-    "click",
-    clearHistory
-);
-
-
-messageInput.addEventListener(
-    "keydown",
-    (event) => {
-        if (
-            event.key === "Enter" &&
-            (event.ctrlKey || event.metaKey)
-        ) {
-            analyzeMessage();
-        }
+messageInput.addEventListener("keydown", (event) => {
+    if (
+        event.key === "Enter" &&
+        (event.ctrlKey || event.metaKey)
+    ) {
+        analyzeMessage();
     }
-);
+});
 
 
 // -----------------------------------------------------------------------------
